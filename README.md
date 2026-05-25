@@ -61,6 +61,14 @@ Para obrigar o uso do MySQL e desativar o modo SQLite local:
 MYSQL_REQUIRED=1 python3 app.py
 ```
 
+Para ativar o modo debug apenas durante desenvolvimento:
+
+```bash
+FLASK_DEBUG=1 python3 app.py
+```
+
+Em uso normal ou entrega, deixe `FLASK_DEBUG` desativado.
+
 ## Arquivos adicionados
 
 - `app.py`: rotas da aplicacao Flask.

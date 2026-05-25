@@ -12,6 +12,26 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "sistema-academico-dev")
 
 
+def debug_enabled():
+    return os.getenv("FLASK_DEBUG", "").lower() in {"1", "true", "yes"}
+
+
+def form_values(*fields):
+    return {field: request.form.get(field, "").strip() for field in fields}
+
+
+def has_blank_fields(values):
+    return any(not value for value in values.values())
+
+
+def parse_positive_int(value):
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        return None
+    return number if number > 0 else None
+
+
 def get_dashboard_counts():
     return {
         "alunos": fetch_one("SELECT COUNT(*) AS total FROM alunos")["total"],
@@ -123,6 +143,11 @@ def baixar_relatorio_pdf():
 @app.route("/alunos", methods=["GET", "POST"])
 def alunos():
     if request.method == "POST":
+        dados = form_values("nome", "cpf", "matricula", "curso")
+        if has_blank_fields(dados):
+            flash("Preencha todos os campos obrigatorios do aluno.", "warning")
+            return redirect(url_for("alunos"))
+
         try:
             execute(
                 """
@@ -130,10 +155,10 @@ def alunos():
                 VALUES (%s, %s, %s, %s)
                 """,
                 (
-                    request.form["nome"].strip(),
-                    request.form["cpf"].strip(),
-                    request.form["matricula"].strip(),
-                    request.form["curso"].strip(),
+                    dados["nome"],
+                    dados["cpf"],
+                    dados["matricula"],
+                    dados["curso"],
                 ),
             )
             flash("Aluno cadastrado com sucesso.", "success")
@@ -157,7 +182,7 @@ def alunos():
           LEFT JOIN matriculas m ON m.aluno_id = a.id AND m.ativo = 1
           LEFT JOIN disciplinas d ON d.id = m.disciplina_id
          {filtro_nome}
-         GROUP BY a.id
+         GROUP BY a.id, a.nome, a.cpf, a.matricula, a.curso, a.criado_em
          ORDER BY a.nome
         """,
         params,
@@ -173,6 +198,11 @@ def editar_aluno(aluno_id):
         return redirect(url_for("alunos"))
 
     if request.method == "POST":
+        dados = form_values("nome", "cpf", "matricula", "curso")
+        if has_blank_fields(dados):
+            flash("Preencha todos os campos obrigatorios do aluno.", "warning")
+            return redirect(url_for("editar_aluno", aluno_id=aluno_id))
+
         try:
             execute(
                 """
@@ -181,10 +211,10 @@ def editar_aluno(aluno_id):
                  WHERE id = %s
                 """,
                 (
-                    request.form["nome"].strip(),
-                    request.form["cpf"].strip(),
-                    request.form["matricula"].strip(),
-                    request.form["curso"].strip(),
+                    dados["nome"],
+                    dados["cpf"],
+                    dados["matricula"],
+                    dados["curso"],
                     aluno_id,
                 ),
             )
@@ -199,6 +229,11 @@ def editar_aluno(aluno_id):
 @app.route("/professores", methods=["GET", "POST"])
 def professores():
     if request.method == "POST":
+        dados = form_values("nome", "cpf", "registro", "area")
+        if has_blank_fields(dados):
+            flash("Preencha todos os campos obrigatorios do professor.", "warning")
+            return redirect(url_for("professores"))
+
         try:
             execute(
                 """
@@ -206,10 +241,10 @@ def professores():
                 VALUES (%s, %s, %s, %s)
                 """,
                 (
-                    request.form["nome"].strip(),
-                    request.form["cpf"].strip(),
-                    request.form["registro"].strip(),
-                    request.form["area"].strip(),
+                    dados["nome"],
+                    dados["cpf"],
+                    dados["registro"],
+                    dados["area"],
                 ),
             )
             flash("Professor cadastrado com sucesso.", "success")
@@ -224,7 +259,7 @@ def professores():
                {group_concat} AS disciplinas
           FROM professores p
           LEFT JOIN disciplinas d ON d.professor_id = p.id
-         GROUP BY p.id
+         GROUP BY p.id, p.nome, p.cpf, p.registro, p.area, p.criado_em
          ORDER BY p.nome
         """
     )
@@ -239,6 +274,11 @@ def editar_professor(professor_id):
         return redirect(url_for("professores"))
 
     if request.method == "POST":
+        dados = form_values("nome", "cpf", "registro", "area")
+        if has_blank_fields(dados):
+            flash("Preencha todos os campos obrigatorios do professor.", "warning")
+            return redirect(url_for("editar_professor", professor_id=professor_id))
+
         try:
             execute(
                 """
@@ -247,10 +287,10 @@ def editar_professor(professor_id):
                  WHERE id = %s
                 """,
                 (
-                    request.form["nome"].strip(),
-                    request.form["cpf"].strip(),
-                    request.form["registro"].strip(),
-                    request.form["area"].strip(),
+                    dados["nome"],
+                    dados["cpf"],
+                    dados["registro"],
+                    dados["area"],
                     professor_id,
                 ),
             )
@@ -265,6 +305,16 @@ def editar_professor(professor_id):
 @app.route("/disciplinas", methods=["GET", "POST"])
 def disciplinas():
     if request.method == "POST":
+        dados = form_values("nome", "codigo", "carga_horaria")
+        if has_blank_fields(dados):
+            flash("Preencha todos os campos obrigatorios da disciplina.", "warning")
+            return redirect(url_for("disciplinas"))
+
+        carga_horaria = parse_positive_int(dados["carga_horaria"])
+        if carga_horaria is None:
+            flash("Informe uma carga horaria maior que zero.", "warning")
+            return redirect(url_for("disciplinas"))
+
         professor_id = request.form.get("professor_id") or None
         try:
             execute(
@@ -273,9 +323,9 @@ def disciplinas():
                 VALUES (%s, %s, %s, %s)
                 """,
                 (
-                    request.form["nome"].strip(),
-                    request.form["codigo"].strip(),
-                    int(request.form["carga_horaria"]),
+                    dados["nome"],
+                    dados["codigo"],
+                    carga_horaria,
                     professor_id,
                 ),
             )
@@ -292,7 +342,7 @@ def disciplinas():
           FROM disciplinas d
           LEFT JOIN professores p ON p.id = d.professor_id
           LEFT JOIN matriculas m ON m.disciplina_id = d.id AND m.ativo = 1
-         GROUP BY d.id, p.nome
+         GROUP BY d.id, d.nome, d.codigo, d.carga_horaria, d.professor_id, d.criado_em, p.nome
          ORDER BY d.nome
         """
     )
@@ -311,6 +361,16 @@ def editar_disciplina(disciplina_id):
     professores_lista = fetch_all("SELECT id, nome FROM professores ORDER BY nome")
 
     if request.method == "POST":
+        dados = form_values("nome", "codigo", "carga_horaria")
+        if has_blank_fields(dados):
+            flash("Preencha todos os campos obrigatorios da disciplina.", "warning")
+            return redirect(url_for("editar_disciplina", disciplina_id=disciplina_id))
+
+        carga_horaria = parse_positive_int(dados["carga_horaria"])
+        if carga_horaria is None:
+            flash("Informe uma carga horaria maior que zero.", "warning")
+            return redirect(url_for("editar_disciplina", disciplina_id=disciplina_id))
+
         professor_id = request.form.get("professor_id") or None
         try:
             execute(
@@ -320,9 +380,9 @@ def editar_disciplina(disciplina_id):
                  WHERE id = %s
                 """,
                 (
-                    request.form["nome"].strip(),
-                    request.form["codigo"].strip(),
-                    int(request.form["carga_horaria"]),
+                    dados["nome"],
+                    dados["codigo"],
+                    carga_horaria,
                     professor_id,
                     disciplina_id,
                 ),
@@ -342,8 +402,18 @@ def editar_disciplina(disciplina_id):
 @app.route("/matriculas", methods=["GET", "POST"])
 def matriculas():
     if request.method == "POST":
-        aluno_id = request.form["aluno_id"]
-        disciplina_id = request.form["disciplina_id"]
+        aluno_id = request.form.get("aluno_id", "").strip()
+        disciplina_id = request.form.get("disciplina_id", "").strip()
+        if not aluno_id or not disciplina_id:
+            flash("Selecione um aluno e uma disciplina para matricular.", "warning")
+            return redirect(url_for("matriculas"))
+
+        aluno = fetch_one("SELECT id FROM alunos WHERE id = %s", (aluno_id,))
+        disciplina = fetch_one("SELECT id FROM disciplinas WHERE id = %s", (disciplina_id,))
+        if not aluno or not disciplina:
+            flash("Aluno ou disciplina nao encontrado.", "warning")
+            return redirect(url_for("matriculas"))
+
         matricula_existente = fetch_one(
             """
             SELECT id, ativo
@@ -410,16 +480,28 @@ def editar_matricula(matricula_id):
     disciplinas_lista = fetch_all("SELECT id, nome, codigo FROM disciplinas ORDER BY nome")
 
     if request.method == "POST":
+        aluno_id = request.form.get("aluno_id", "").strip()
+        disciplina_id = request.form.get("disciplina_id", "").strip()
+        if not aluno_id or not disciplina_id:
+            flash("Selecione um aluno e uma disciplina.", "warning")
+            return redirect(url_for("editar_matricula", matricula_id=matricula_id))
+
+        aluno = fetch_one("SELECT id FROM alunos WHERE id = %s", (aluno_id,))
+        disciplina = fetch_one("SELECT id FROM disciplinas WHERE id = %s", (disciplina_id,))
+        if not aluno or not disciplina:
+            flash("Aluno ou disciplina nao encontrado.", "warning")
+            return redirect(url_for("editar_matricula", matricula_id=matricula_id))
+
         try:
             execute(
                 """
                 UPDATE matriculas
                    SET aluno_id = %s, disciplina_id = %s, ativo = 1, removido_em = NULL
-                 WHERE id = %s
+                WHERE id = %s
                 """,
                 (
-                    request.form["aluno_id"],
-                    request.form["disciplina_id"],
+                    aluno_id,
+                    disciplina_id,
                     matricula_id,
                 ),
             )
@@ -451,4 +533,4 @@ def excluir_matricula(matricula_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=debug_enabled())

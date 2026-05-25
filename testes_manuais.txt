@@ -1,0 +1,83 @@
+Testes manuais para homologacao do Sistema Academico
+
+Use este roteiro para conferir o funcionamento do sistema antes da entrega.
+
+1. Abrir a pagina inicial
+Passos: executar python app.py e acessar http://127.0.0.1:5000.
+Resultado esperado: a pagina inicial abre sem erro e mostra os totais do sistema.
+
+2. Cadastrar aluno com dados validos
+Passos: acessar Alunos, preencher nome, CPF, matricula e curso, e clicar em cadastrar.
+Resultado esperado: o sistema mostra mensagem de sucesso e o aluno aparece na lista.
+
+3. Tentar cadastrar aluno com campos vazios
+Passos: enviar o formulario de aluno sem preencher todos os campos.
+Resultado esperado: o sistema mostra aviso pedindo o preenchimento dos campos obrigatorios.
+
+4. Tentar cadastrar aluno duplicado
+Passos: cadastrar outro aluno usando o mesmo CPF ou a mesma matricula.
+Resultado esperado: o sistema mostra aviso informando que ja existe aluno com esse CPF ou matricula.
+
+5. Pesquisar aluno por nome
+Passos: pesquisar usando o nome completo, parte do nome e letras maiusculas ou minusculas.
+Resultado esperado: o sistema encontra o aluno quando o termo faz parte do nome.
+
+6. Editar aluno
+Passos: clicar em Editar em um aluno, alterar os dados e salvar.
+Resultado esperado: o sistema mostra mensagem de sucesso e exibe os dados atualizados.
+
+7. Cadastrar professor com dados validos
+Passos: acessar Professores, preencher nome, CPF, registro e area, e cadastrar.
+Resultado esperado: o professor aparece na lista com mensagem de sucesso.
+
+8. Tentar cadastrar professor duplicado
+Passos: cadastrar outro professor com o mesmo CPF ou registro.
+Resultado esperado: o sistema mostra aviso de duplicidade.
+
+9. Cadastrar disciplina com dados validos
+Passos: acessar Disciplinas, preencher nome, codigo, carga horaria e professor opcional.
+Resultado esperado: a disciplina aparece na lista com mensagem de sucesso.
+
+10. Tentar cadastrar disciplina com carga horaria invalida
+Passos: informar carga horaria vazia, zero, negativa ou texto.
+Resultado esperado: o sistema mostra aviso pedindo uma carga horaria maior que zero.
+
+11. Matricular aluno em disciplina
+Passos: acessar Matriculas, selecionar aluno e disciplina, e confirmar.
+Resultado esperado: a matricula aparece na lista e o sistema mostra mensagem de sucesso.
+
+12. Tentar matricular o mesmo aluno duas vezes na mesma disciplina
+Passos: repetir a mesma matricula.
+Resultado esperado: o sistema mostra aviso informando que o aluno ja esta matriculado.
+
+13. Remover matricula
+Passos: clicar em Remover em uma matricula ativa.
+Resultado esperado: a matricula sai da lista de ativas, mas permanece registrada no banco como inativa.
+
+14. Reativar matricula removida
+Passos: cadastrar novamente uma matricula que foi removida.
+Resultado esperado: o sistema reativa a matricula e mostra mensagem de sucesso.
+
+15. Gerar relatorio JSON
+Passos: acessar a opcao de relatorio JSON.
+Resultado esperado: o navegador baixa um arquivo JSON com alunos, professores, disciplinas e matriculas.
+
+16. Gerar relatorio PDF
+Passos: acessar a opcao de relatorio PDF.
+Resultado esperado: o navegador baixa um arquivo PDF com os dados academicos.
+
+17. Testar sem MySQL
+Passos: executar o sistema sem MySQL disponivel.
+Resultado esperado: o sistema usa o SQLite local automaticamente e continua funcionando.
+
+18. Testar com MySQL obrigatorio
+Passos: configurar o MySQL e executar com MYSQL_REQUIRED=1.
+Resultado esperado: o sistema conecta ao MySQL ou mostra erro caso a configuracao esteja incorreta.
+
+19. Conferir responsividade
+Passos: abrir o sistema em tamanhos diferentes de tela, como notebook e celular.
+Resultado esperado: menus, tabelas e formularios continuam legiveis e utilizaveis.
+
+20. Conferir modo de desenvolvimento
+Passos: executar normalmente e depois executar com FLASK_DEBUG=1.
+Resultado esperado: o modo debug fica desligado por padrao e liga apenas quando a variavel FLASK_DEBUG e usada.
