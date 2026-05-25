@@ -1,0 +1,84 @@
+Respostas das Questoes - Sistema Academico
+Arquivo: questoes.txt
+
+As respostas abaixo seguem a ordem das perguntas do arquivo questoes.txt e explicam cada ponto com base no projeto desenvolvido.
+
+1. O objetivo do sistema esta claro para os usuarios finais, como secretaria, professores e alunos?
+
+Sim. O objetivo do sistema e controlar informacoes academicas, permitindo cadastrar alunos, professores, disciplinas e matriculas, alem de consultar dados e gerar relatorios. Para a secretaria, o sistema ajuda na organizacao dos cadastros e matriculas. Para professores, facilita a visualizacao das disciplinas. Para alunos, representa o controle das disciplinas em que estao matriculados.
+
+2. Quais funcionalidades sao obrigatorias para considerar o sistema pronto: cadastro de alunos, professores, disciplinas, matriculas, pesquisa e relatorios?
+
+As funcionalidades obrigatorias sao: cadastro de alunos, cadastro de professores, cadastro de disciplinas, realizacao de matriculas, edicao de registros, pesquisa de alunos por nome, listagem das informacoes e geracao de relatorios em JSON e PDF. Essas funcoes formam o fluxo principal de um sistema academico simples.
+
+3. Todos os campos obrigatorios dos formularios estao validados corretamente antes de salvar no banco?
+
+Parcialmente. Os formularios possuem campos obrigatorios no HTML e o banco tambem exige dados em colunas importantes. Isso ajuda a evitar cadastros vazios. Porem, ainda seria possivel melhorar a validacao no codigo Python, verificando tamanho, formato de CPF, valores numericos e mensagens especificas antes de salvar.
+
+4. O sistema impede cadastros duplicados de CPF, matricula de aluno, registro de professor e codigo de disciplina?
+
+Sim. O banco possui restricoes de unicidade para CPF, matricula, registro e codigo. Alem disso, o sistema trata erros de integridade e mostra mensagens de alerta quando o usuario tenta cadastrar dados duplicados.
+
+5. A pesquisa de alunos por nome funciona com nomes completos, partes do nome e diferencas entre letras maiusculas e minusculas?
+
+Sim. A pesquisa usa comparacao com LIKE e LOWER, permitindo buscar por nome completo ou apenas parte do nome. Como o texto e convertido para minusculo na consulta, a pesquisa nao depende de letras maiusculas ou minusculas.
+
+6. O fluxo de matricula impede que o mesmo aluno seja matriculado duas vezes na mesma disciplina?
+
+Sim. Antes de cadastrar uma matricula, o sistema verifica se ja existe uma relacao entre o aluno e a disciplina. Se a matricula ja estiver ativa, ele exibe um aviso. O banco tambem possui uma restricao UNIQUE para impedir duplicidade.
+
+7. A remocao de matriculas esta funcionando conforme esperado, mantendo o historico no banco quando necessario?
+
+Sim. A remocao de matricula nao apaga o registro definitivamente. O sistema marca a matricula como inativa e registra a data de remocao, mantendo o historico no banco para consulta futura.
+
+8. O metodo de remover dados do aluno em Aluno.py esta coerente com a regra de negocio definida para o projeto?
+
+Parcialmente. O metodo remover_dados remove o aluno das disciplinas e limpa seus atributos, o que funciona para um modelo em memoria. Porem, no sistema web com banco de dados, a regra mais adequada normalmente seria inativar ou excluir pelo banco, preservando historico quando necessario. Portanto, o metodo e coerente para a parte de POO, mas nao representa sozinho a regra completa do sistema web.
+
+9. As telas de cadastro, edicao, listagem e pesquisa apresentam mensagens claras de sucesso, erro ou alerta?
+
+Sim. O sistema usa mensagens flash para informar sucesso, avisos de duplicidade e registros nao encontrados. Essas mensagens ajudam o usuario a entender se a operacao foi concluida ou se precisa corrigir alguma informacao.
+
+10. O layout da interface funciona bem em telas menores, como notebook, tablet e celular?
+
+Parcialmente. O projeto possui arquivo de estilos e uma interface organizada, mas seria necessario testar em diferentes tamanhos de tela para confirmar totalmente a responsividade. Para homologacao, o ideal e abrir o sistema em notebook, tablet e celular e verificar menus, tabelas e formularios.
+
+11. Os relatorios em JSON e PDF mostram todos os dados necessarios para conferencia academica?
+
+Sim. Os relatorios incluem alunos, professores, disciplinas e matriculas. O JSON serve para conferencia estruturada dos dados, enquanto o PDF oferece uma versao mais simples para leitura e impressao.
+
+12. O banco MySQL pode ser criado corretamente a partir do arquivo schema.sql em um ambiente novo?
+
+Sim, desde que o MySQL esteja instalado, iniciado e o usuario tenha permissao para criar banco e tabelas. O arquivo schema.sql contem os comandos necessarios para criar a estrutura do sistema e inserir dados iniciais.
+
+13. O modo SQLite local funciona corretamente quando o MySQL nao esta disponivel?
+
+Sim. O sistema tenta conectar ao MySQL, mas, se ele nao estiver disponivel e o modo obrigatorio nao estiver ativado, usa automaticamente um banco SQLite local. Esse modo foi testado e permite abrir as paginas, cadastrar dados e gerar relatorios.
+
+14. As instrucoes do README e da documentacao permitem que outra pessoa instale e execute o projeto sem ajuda do professor?
+
+Sim, de forma geral. O README explica como criar o banco, instalar dependencias, configurar variaveis e rodar a aplicacao. Ainda poderia ser melhorado com imagens, exemplos para Windows e uma secao de problemas comuns, mas ja possui as instrucoes principais.
+
+15. Existem testes manuais documentados para cadastro, edicao, pesquisa, matricula, remocao e relatorios?
+
+Parcialmente. As perguntas do arquivo servem como roteiro de homologacao, mas nao ha uma tabela formal de testes manuais com passo a passo, resultado esperado e resultado obtido. Seria interessante criar esse documento para deixar a validacao mais completa.
+
+16. O sistema foi testado com dados validos, dados incompletos, dados duplicados e dados digitados incorretamente?
+
+Parcialmente. Foram feitos testes com dados validos e alguns casos de duplicidade sao tratados pelo banco. Porem, ainda faltam testes mais completos com campos incompletos, formatos invalidos de CPF, carga horaria incorreta e outros erros de digitacao.
+
+17. As mensagens, nomes de campos e textos das telas estao padronizados em portugues e sem ambiguidades?
+
+Sim, em grande parte. As mensagens e nomes principais estao em portugues e sao compreensiveis. Pequenas melhorias podem ser feitas com acentuacao e padronizacao de termos, como usar sempre matricula, disciplina, professor e aluno da mesma forma em todas as telas.
+
+18. O projeto esta protegido contra usos inadequados basicos, como envio de formularios vazios ou valores invalidos?
+
+Parcialmente. O sistema conta com campos obrigatorios, restricoes no banco e tratamento de duplicidade. Mesmo assim, ainda pode melhorar a protecao validando os dados tambem no servidor, tratando valores invalidos e evitando que uma carga horaria ou identificador incorreto cause erro.
+
+19. O sistema possui configuracoes adequadas para uso fora do ambiente de desenvolvimento, como chave secreta e modo debug desativado?
+
+Parcialmente. A chave secreta pode ser definida por variavel de ambiente, o que e uma boa pratica. Porem, no arquivo app.py o sistema roda com debug=True quando executado diretamente. Para producao, o debug deve ficar desativado e a chave secreta deve ser configurada de forma segura.
+
+20. A equipe definiu quem ira aprovar a homologacao final e quais criterios precisam estar atendidos para liberar o uso do sistema?
+
+Essa definicao precisa ser feita pela equipe e pelo professor. Uma sugestao e que a homologacao seja aprovada pelo responsavel do projeto ou professor, usando como criterios: cadastros funcionando, edicoes funcionando, pesquisa correta, matriculas sem duplicidade, remocao mantendo historico, relatorios gerados, README claro e ausencia de erros nas telas principais.
