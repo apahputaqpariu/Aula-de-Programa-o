@@ -128,7 +128,7 @@ def _ensure_sqlite_schema(connection):
     connection.execute(
         """
         INSERT OR IGNORE INTO alunos (nome, cpf, matricula, curso)
-        VALUES (?, ?, ?, ?), (?, ?, ?, ?)
+        VALUES (?, ?, ?, ?), (?, ?, ?, ?), (?, ?, ?, ?)
         """,
         (
             "Felipe Santos",
@@ -139,6 +139,10 @@ def _ensure_sqlite_schema(connection):
             "999.888.777-66",
             "2026002",
             "Ciencia da Computacao",
+            "Fernando Ferreira",
+            "777.333.999-69",
+            "2026003",
+            "Sistemas de Informacao",
         ),
     )
     connection.execute(
@@ -152,11 +156,11 @@ def _ensure_sqlite_schema(connection):
         """
         INSERT OR IGNORE INTO matriculas (aluno_id, disciplina_id)
         SELECT a.id, d.id
-          FROM alunos a
-          JOIN disciplinas d ON d.codigo = ?
-         WHERE a.matricula IN (?, ?)
+         FROM alunos a
+         JOIN disciplinas d ON d.codigo = ?
+        WHERE a.matricula IN (?, ?, ?)
         """,
-        ("POO101", "2026001", "2026002"),
+        ("POO101", "2026001", "2026002", "2026003"),
     )
     connection.commit()
 

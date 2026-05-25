@@ -56,7 +56,8 @@ VALUES ('Mariana Souza', '111.222.333-44', 'PROF001', 'Programacao');
 INSERT IGNORE INTO alunos (nome, cpf, matricula, curso)
 VALUES
   ('Felipe Santos', '555.666.777-88', '2026001', 'Sistemas de Informacao'),
-  ('Ana Lima', '999.888.777-66', '2026002', 'Ciencia da Computacao');
+  ('Ana Lima', '999.888.777-66', '2026002', 'Ciencia da Computacao'),
+  ('Fernando Ferreira', '777.333.999-69', '2026003', 'Sistemas de Informacao');
 
 INSERT IGNORE INTO disciplinas (nome, codigo, carga_horaria, professor_id)
 SELECT 'Programacao Orientada a Objetos', 'POO101', 80, id
@@ -67,4 +68,4 @@ INSERT IGNORE INTO matriculas (aluno_id, disciplina_id)
 SELECT a.id, d.id
   FROM alunos a
   JOIN disciplinas d ON d.codigo = 'POO101'
- WHERE a.matricula IN ('2026001', '2026002');
+ WHERE a.matricula IN ('2026001', '2026002', '2026003');

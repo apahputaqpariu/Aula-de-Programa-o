@@ -218,6 +218,12 @@ def main():
         matricula="2026002",
         curso="Ciencia da Computacao",
     )
+    aluno_3 = Aluno(
+        nome="Fernando Ferreira",
+        cpf="777.333.999-69",
+        matricula="2026003",
+        curso="Sistemas de Informacao",
+    )
 
     disciplina = Disciplina(
         nome="Programacao Orientada a Objetos",
@@ -229,10 +235,12 @@ def main():
     sistema.cadastrar_professor(professor)
     sistema.cadastrar_aluno(aluno_1)
     sistema.cadastrar_aluno(aluno_2)
+    sistema.cadastrar_aluno(aluno_3)
     sistema.cadastrar_disciplina(disciplina)
 
     sistema.matricular_aluno_em_disciplina("2026001", "POO101")
     sistema.matricular_aluno_em_disciplina("2026002", "POO101")
+    sistema.matricular_aluno_em_disciplina("2026003", "POO101")
 
     sistema.listar_professores()
     sistema.listar_alunos()
