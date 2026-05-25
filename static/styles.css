@@ -5,7 +5,8 @@
   --muted: #6b7280;
   --line: #d9e0ea;
   --primary: #1769aa;
-  --primary-dark: #eaab0c;
+  --primary-hover: #8ee6a8;
+  --primary-hover-text: #0f3d22;
   --success: #0f766e;
   --warning: #9a5b00;
 }
@@ -74,8 +75,8 @@ button {
 }
 
 .button.secondary:hover {
-  color: #ffffff;
-  background: var(--primary-dark);
+  color: var(--primary-hover-text);
+  background: var(--primary-hover);
 }
 
 nav a {
@@ -86,8 +87,8 @@ nav a {
 nav a:hover,
 .button:hover,
 button:hover {
-  background: var(--primary-dark);
-  color: #ffffff;
+  background: var(--primary-hover);
+  color: var(--primary-hover-text);
 }
 
 .page {
@@ -297,8 +298,8 @@ th {
 }
 
 .ghost-link:hover {
-  color: #ffffff;
-  background: var(--primary-dark);
+  color: var(--primary-hover-text);
+  background: var(--primary-hover);
 }
 
 .ghost {
